@@ -279,14 +279,6 @@ BattleScript_EffectShedTail::
 	switchinevents
 	goto BattleScript_MoveEnd
 
-BattleScript_MoveEffectPsychicNoise::
-	savetarget
-	copybyte gBattlerTarget, gEffectBattler
-	printstring STRINGID_PKMNPREVENTEDFROMHEALING
-	waitmessage B_WAIT_TIME_LONG
-	restoretarget
-	return
-
 BattleScript_EffectDoodle::
 	attackcanceler
 	trycopyability BS_ATTACKER, BattleScript_ButItFailed
@@ -481,20 +473,6 @@ BattleScript_EffectRevivalBlessingSendOut:
 	switchinevents
 	goto BattleScript_MoveEnd
 
-BattleScript_MoveEffectStealthRock::
-	setstealthrock BattleScript_MoveEffectStealthRockRet
-	printfromtable gDmgHazardsStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_MoveEffectStealthRockRet:
-	return
-
-BattleScript_MoveEffectSpikes::
-	trysetspikes BattleScript_MoveEffectSpikesRet
-	printfromtable gDmgHazardsStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_MoveEffectSpikesRet:
-	return
-
 BattleScript_EffectTeatime::
 	attackcanceler
 	checkteatimetargets BattleScript_ButItFailed
@@ -673,19 +651,12 @@ BattleScript_MoveEffectHaze::
 	return
 
 BattleScript_MoveEffectLeechSeed::
-	savetarget
-	copybyte gBattlerTarget, gEffectBattler
-	printstring STRINGID_PKMNSEEDED
+	printfromtable gLeechSeedStringIds
 	waitmessage B_WAIT_TIME_LONG
-	restoretarget
 	return
 
-BattleScript_MoveEffectScreens::
-	saveattacker
-	copybyte gBattlerAttacker, gEffectBattler
-	printfromtable gReflectLightScreenSafeguardStringIds
+BattleScript_MoveEffectSetStatus::
 	waitmessage B_WAIT_TIME_LONG
-	restoreattacker
 	return
 
 BattleScript_StuffCheeks::
@@ -820,43 +791,9 @@ BattleScript_MoveEffectBugBite::
 	trysymbiosis BS_TARGET
 	return
 
-BattleScript_MoveEffectCoreEnforcer::
-	savetarget
-	copybyte gBattlerTarget, gEffectBattler
-	setgastroacid BattleScript_CoreEnforcerRet
-	printstring STRINGID_PKMNSABILITYSUPPRESSED
-	waitmessage B_WAIT_TIME_LONG
-	trytoclearprimalweather
-	call BattleScript_TryRevertWeatherform
-	flushtextbox
-	tryendneutralizinggas
-BattleScript_CoreEnforcerRet:
-	restoretarget
-	return
-
-BattleScript_EffectLaserFocus::
-	attackcanceler
-	jumpifvolatile BS_ATTACKER, VOLATILE_LASER_FOCUS_TIMER, BattleScript_ButItFailed
-	setvolatile BS_ATTACKER, VOLATILE_LASER_FOCUS_TIMER, B_LASER_FOCUS_TIMER
-	attackanimation
-	waitanimation
-	printstring STRINGID_LASERFOCUS
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 BattleScript_PartingShotEscape::
 	call BattleScript_MoveSwitchPursuitRet
 	return
-
-BattleScript_EffectPowder::
-	attackcanceler
-	jumpifvolatile BS_TARGET, VOLATILE_POWDER, BattleScript_ButItFailed
-	setvolatile BS_TARGET, VOLATILE_POWDER
-	attackanimation
-	waitanimation
-	printstring STRINGID_COVEREDINPOWDER
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
 
 BattleScript_MoveEffectFeint::
 	printfromtable gBrokeProtectionStringIds
@@ -1227,32 +1164,12 @@ BattleScript_EffectGuardSwap::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectSpeedSwap::
-	attackcanceler
-	swapstats STAT_SPEED
-	setvolatile BS_ATTACKER, VOLATILE_SPEED_SWAP, 1
-	setvolatile BS_TARGET, VOLATILE_SPEED_SWAP, 1
-	attackanimation
-	waitanimation
-	printstring STRINGID_ATTACKERSWITCHEDSTATWITHTARGET
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 BattleScript_EffectTelekinesis::
 	attackcanceler
 	settelekinesis BattleScript_ButItFailed
 	attackanimation
 	waitanimation
 	printstring STRINGID_HURLEDINTOTHEAIR
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectStealthRock::
-	attackcanceler
-	setstealthrock BattleScript_ButItFailed
-	attackanimation
-	waitanimation
-	printstring STRINGID_POINTEDSTONESFLOAT
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -1265,40 +1182,14 @@ BattleScript_EffectStickyWeb::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectGastroAcid::
-	attackcanceler
-	jumpifvolatile BS_TARGET, VOLATILE_GASTRO_ACID, BattleScript_ButItFailed
-	setgastroacid BattleScript_ButItFailed
-	attackanimation
-	waitanimation
+BattleScript_MoveEffectGastroAcid::
 	printstring STRINGID_PKMNSABILITYSUPPRESSED
 	waitmessage B_WAIT_TIME_LONG
 	trytoclearprimalweather
 	call BattleScript_TryRevertWeatherform
 	flushtextbox
 	tryendneutralizinggas
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectToxicSpikes::
-	attackcanceler
-	settoxicspikes BattleScript_ButItFailed
-	attackanimation
-	waitanimation
-	printstring STRINGID_POISONSPIKESSCATTERED
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectMagnetRise::
-	attackcanceler
-	jumpifvolatile BS_ATTACKER, VOLATILE_ROOT, BattleScript_ButItFailed
-	jumpifvolatile BS_ATTACKER, VOLATILE_SMACK_DOWN, BattleScript_ButItFailed
-	jumpifvolatile BS_ATTACKER, VOLATILE_MAGNET_RISE_TIMER, BattleScript_ButItFailed
-	setvolatile BS_ATTACKER, VOLATILE_MAGNET_RISE_TIMER, B_MAGNET_RISE_TIMER
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNLEVITATEDONELECTROMAGNETISM
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	return
 
 BattleScript_EffectTrickRoom::
 	attackcanceler
@@ -1333,25 +1224,6 @@ BattleScript_EffectMagicRoom::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectAquaRing::
-	attackcanceler
-	jumpifvolatile BS_ATTACKER, VOLATILE_AQUA_RING, BattleScript_ButItFailed
-	setvolatile BS_ATTACKER, VOLATILE_AQUA_RING
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNSURROUNDEDWITHVEILOFWATER
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectEmbargo::
-	attackcanceler
-	setembargo BattleScript_ButItFailed
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNCANTUSEITEMSANYMORE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 BattleScript_EffectTailwind::
 	attackcanceler
 	settailwind BattleScript_ButItFailed
@@ -1372,14 +1244,6 @@ BattleScript_TryTailwindAbilitiesLoop_Increment:
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_TryTailwindAbilitiesLoop_Iter
 	restoretarget
 	return
-
-BattleScript_EffectMiracleEye::
-	attackcanceler
-	jumpifgenconfiglowerthan CONFIG_B_MIRACLE_EYE_FAIL, GEN_5, BattleScript_MiracleEyeSet
-	jumpifvolatile BS_TARGET, VOLATILE_MIRACLE_EYE, BattleScript_ButItFailed
-BattleScript_MiracleEyeSet:
-	setvolatile BS_TARGET, VOLATILE_MIRACLE_EYE
-	goto BattleScript_IdentifiedFoe
 
 BattleScript_EffectGravity::
 	call BattleScript_EffectGravityInternal
@@ -1417,17 +1281,6 @@ BattleScript_EffectRoost::
 	tryhealhalfhealth BS_TARGET, BattleScript_AlreadyAtFullHp
 	setroost
 	goto BattleScript_HealTarget
-
-BattleScript_EffectHealBlock::
-	attackcanceler
-	jumpifvolatile BS_TARGET, VOLATILE_HEAL_BLOCK_TIMER, BattleScript_ButItFailed
-	jumpifability BS_TARGET_SIDE, ABILITY_AROMA_VEIL, BattleScript_AromaVeilProtects
-	setvolatile BS_TARGET, VOLATILE_HEAL_BLOCK_TIMER, B_HEAL_BLOCK_TIMER
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNPREVENTEDFROMHEALING
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
 
 BattleScript_EffectHitEscape::
 	jumpiffainted BS_TARGET, FALSE, BattleScript_HitEscapeSwitch
@@ -1470,13 +1323,6 @@ BattleScript_TerrainPrevents::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
-BattleScript_ImmunityProtectedRet::
-	call BattleScript_AbilityPopUp
-	pause B_WAIT_TIME_SHORT
-	printstring STRINGID_ITDOESNTAFFECT
-	waitmessage B_WAIT_TIME_LONG
-	return
-
 BattleScript_ElectricTerrainPrevents::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_ELECTRICTERRAINPREVENTS
@@ -1491,20 +1337,12 @@ BattleScript_MistyTerrainPrevents::
 	setmoveresultflags MOVE_RESULT_FAILED
 	goto BattleScript_MoveEnd
 
-BattleScript_FlowerVeilProtectsRet::
+BattleScript_FlowerVeilProtects::
 	pause B_WAIT_TIME_SHORT
 	call BattleScript_AbilityPopUp
 	printstring STRINGID_FLOWERVEILPROTECTED
 	waitmessage B_WAIT_TIME_LONG
 	return
-
-BattleScript_FlowerVeilProtects::
-	pause B_WAIT_TIME_SHORT
-	call BattleScript_AbilityPopUp
-	printstring STRINGID_FLOWERVEILPROTECTEDTARGET
-	waitmessage B_WAIT_TIME_LONG
-	setmoveresultflags MOVE_RESULT_FAILED
-	goto BattleScript_MoveEnd
 
 BattleScript_SweetVeilProtectsRet::
 	pause B_WAIT_TIME_SHORT
@@ -1677,21 +1515,7 @@ BattleScript_AlreadyPoisoned::
 	pause B_WAIT_TIME_LONG
 	printstring STRINGID_PKMNALREADYPOISONED
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_ImmunityProtected::
-	call BattleScript_AbilityPopUp
-	goto BattleScript_DoesntAffectTargetAtkString
-
-BattleScript_EffectAuroraVeil::
-	attackcanceler
-	setauroraveil
-	goto BattleScript_PrintReflectLightScreenSafeguardString
-
-BattleScript_EffectLightScreen::
-	attackcanceler
-	setlightscreen
-	goto BattleScript_PrintReflectLightScreenSafeguardString
+	return
 
 BattleScript_EffectRest::
 	attackcanceler
@@ -1793,27 +1617,12 @@ BattleScript_EffectTransform::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectReflect::
-	attackcanceler
-	setreflect
-BattleScript_PrintReflectLightScreenSafeguardString::
-	attackanimation
-	waitanimation
-	printfromtable gReflectLightScreenSafeguardStringIds
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_VoltAbsorbHeal:
-	copybyte gBattlerAbility, gBattlerTarget
-	tryhealquarterhealth BS_TARGET, BattleScript_AbilityProtectedTarget @ Check if max hp
-	goto BattleScript_MoveHPDrain
-
 BattleScript_AlreadyParalyzed::
 	setalreadystatusedmoveattempt
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNISALREADYPARALYZED
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	return
 
 BattleScript_PowerHerbActivation::
 	call BattleScript_ItemPopUp_AttackerNoFlush
@@ -1897,15 +1706,10 @@ BattleScript_EffectMimic::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectLeechSeed::
+BattleScript_EffectStatusMoveEffect::
 	attackcanceler
 	pause B_WAIT_TIME_SHORT
-BattleScript_DoLeechSeed::
-	setseeded
-	attackanimation
-	waitanimation
-	printfromtable gLeechSeedStringIds
-	waitmessage B_WAIT_TIME_LONG
+	setadditionaleffects
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectDoNothing::
@@ -1997,15 +1801,6 @@ BattleScript_EffectSketch::
 	attackanimation
 	waitanimation
 	printstring STRINGID_PKMNSKETCHEDMOVE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectDestinyBond::
-	attackcanceler
-	setvolatile BS_ATTACKER, VOLATILE_DESTINY_BOND, 2
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNTRYINGTOTAKEFOE
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -2111,30 +1906,6 @@ BattleScript_EffectEndure::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectSpikes::
-	attackcanceler
-	trysetspikes BattleScript_ButItFailed
-	attackanimation
-	waitanimation
-	printstring STRINGID_SPIKESSCATTERED
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectForesight::
-	attackcanceler
-	jumpifgenconfiglowerthan CONFIG_B_FORESIGHT_FAIL, GEN_3, BattleScript_ForesightFailCheck
-	jumpifgenconfiglowerthan CONFIG_B_FORESIGHT_FAIL, GEN_5, BattleScript_ForesightSet
-BattleScript_ForesightFailCheck:
-	jumpifvolatile BS_TARGET, VOLATILE_FORESIGHT, BattleScript_ButItFailed
-BattleScript_ForesightSet:
-	setvolatile BS_TARGET, VOLATILE_FORESIGHT
-BattleScript_IdentifiedFoe:
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNIDENTIFIED
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 BattleScript_EffectPerishSong::
 	attackcanceler
 	trysetperishsong BattleScript_ButItFailed
@@ -2202,11 +1973,6 @@ BattleScript_PresentHealGetTarget:
 	getpossiblenexttarget BattleScript_PresentHealNextTarget
 	moveendfrom MOVEEND_ITEM_EFFECTS_ATTACKER_2
 	end
-
-BattleScript_EffectSafeguard::
-	attackcanceler
-	setsafeguard
-	goto BattleScript_PrintReflectLightScreenSafeguardString
 
 BattleScript_EffectBatonPass::
 	attackcanceler
@@ -2448,23 +2214,12 @@ BattleScript_EffectTorment::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectNonVolatileStatus::
-	attackcanceler
-	trynonvolatilestatus
-	attackanimation
-	waitanimation
-	setnonvolatilestatus TRIGGER_ON_MOVE
-	clearmoveresultflags MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_MOSTLY_INEFFECTIVE | MOVE_RESULT_EXTREMELY_EFFECTIVE
-	resultmessage
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-
 BattleScript_AlreadyBurned::
 	setalreadystatusedmoveattempt
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNALREADYHASBURN
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	return
 
 BattleScript_FocusPunchLostFocus::
 	printstring STRINGID_PKMNLOSTFOCUS
@@ -2618,7 +2373,7 @@ BattleScript_PrintAbilityMadeIneffective::
 	call BattleScript_AbilityPopUp
 	printstring STRINGID_PKMNSXMADEITINEFFECTIVE
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	return
 
 BattleScript_EffectSkillSwap::
 	attackcanceler
@@ -2659,16 +2414,6 @@ BattleScript_EffectRefresh::
 	printfromtable gCureStatusStringIds
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_ATTACKER
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectGrudge::
-	attackcanceler
-	jumpifvolatile BS_ATTACKER, VOLATILE_GRUDGE, BattleScript_ButItFailed
-	setvolatile BS_ATTACKER, VOLATILE_GRUDGE, 2
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNWANTSGRUDGE
-	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectSnatch::
@@ -3294,6 +3039,12 @@ BattleScript_GravityEnds::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+BattleScript_SafeguardProtectedRet::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PKMNUSEDSAFEGUARD
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_SafeguardProtected::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNUSEDSAFEGUARD
@@ -3557,7 +3308,6 @@ BattleScript_WindPowerActivates::
 BattleScript_ToxicDebrisActivates::
 	call BattleScript_AbilityPopUp
 	pause B_WAIT_TIME_SHORT
-	settoxicspikes BattleScript_ToxicDebrisRet
 	printstring STRINGID_POISONSPIKESSCATTERED
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_ToxicDebrisRet:
@@ -5897,13 +5647,6 @@ BattleScript_EjectItemActivates::
 BattleScript_EjectPackActivates_SendReplacement::
 	call BattleScript_EjectItemActivates
 	goto BattleScript_QueuedSwitchOpenPartyScreen
-
-BattleScript_DoesntAffectTargetAtkString::
-	pause B_WAIT_TIME_SHORT
-	printstring STRINGID_ITDOESNTAFFECT
-	waitmessage B_WAIT_TIME_LONG
-	setmoveresultflags MOVE_RESULT_NO_EFFECT
-	goto BattleScript_MoveEnd
 
 BattleScript_DoesntAffectScripting::
 	pause B_WAIT_TIME_SHORT
