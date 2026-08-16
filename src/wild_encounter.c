@@ -1,4 +1,5 @@
 #include "global.h"
+#include "pokemon_randomizer.h"
 #include "battle_setup.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
@@ -461,6 +462,12 @@ static u8 PickWildMonNature(enum Species species)
 
 void CreateWildMon(enum Species species, u8 level)
 {
+    u32 randomizerIndex = ((u32)gSaveBlock1Ptr->location.mapGroup << 24)
+                        | ((u32)gSaveBlock1Ptr->location.mapNum << 16)
+                        | ((u32)species << 4)
+                        | level;
+    species = PokemonRandomizer_GetSpecies(RANDOMIZER_DOMAIN_WILD, randomizerIndex);
+
     ZeroEnemyPartyMons();
     u32 personality = GetMonPersonality(species, GetSynchronizedGender(WILDMON_ORIGIN, species), PickWildMonNature(species), RANDOM_UNOWN_LETTER);
     CreateMonWithIVs(&gParties[B_TRAINER_OPPONENT_A][0], species, level, personality, OTID_STRUCT_PLAYER_ID, USE_RANDOM_IVS);

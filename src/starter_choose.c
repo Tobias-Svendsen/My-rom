@@ -1,4 +1,5 @@
 #include "global.h"
+#include "pokemon_randomizer.h"
 #include "bg.h"
 #include "data.h"
 #include "decompress.h"
@@ -349,9 +350,9 @@ static const struct SpriteTemplate sSpriteTemplate_StarterCircle =
 // .text
 u16 GetStarterPokemon(u16 chosenStarterId)
 {
-    if (chosenStarterId > STARTER_MON_COUNT)
+    if (chosenStarterId >= STARTER_MON_COUNT)
         chosenStarterId = 0;
-    return sStarterMon[chosenStarterId];
+    return PokemonRandomizer_GetSpecies(RANDOMIZER_DOMAIN_STARTER, chosenStarterId);
 }
 
 static void VblankCB_StarterChoose(void)
