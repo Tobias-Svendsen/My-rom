@@ -1,6 +1,7 @@
 #include "global.h"
 #include "pokemon_randomizer.h"
 #include "new_game.h"
+#include "pokemon.h"
 
 /* The save's Trainer ID is the seed. Reading it directly means the same
  * randomized world is reproduced after closing/reopening the game. */
@@ -39,4 +40,33 @@ enum Species PokemonRandomizer_GetSpecies(enum PokemonRandomizerDomain domain, u
     } while (species == SPECIES_EGG);
 
     return species;
+}
+
+void PokemonRandomizer_RandomizeTrainerParty(struct Pokemon *party, u16 trainerId)
+{
+    u8 slot;
+
+    for (slot = 0; slot < PARTY_SIZE; slot++)
+    {
+        enum Species oldSpecies = GetMonData(&party[slot], MON_DATA_SPECIES_OR_EGG);
+        enum Species randomizedSpecies;
+        u8 abilityNum;
+        u8 level;
+
+        if (oldSpecies == SPECIES_NONE || oldSpecies == SPECIES_EGG)
+            break;
+
+        level = GetMonData(&party[slot], MON_DATA_LEVEL);
+        randomizedSpecies = PokemonRandomizer_GetSpecies(RANDOMIZER_DOMAIN_TRAINER,
+            ((u32)trainerId << 8) | slot);
+
+        SetMonData(&party[slot], MON_DATA_SPECIES, &randomizedSpecies);
+        abilityNum = GetMonData(&party[slot], MON_DATA_ABILITY_NUM);
+        if (GetAbilityBySpecies(randomizedSpecies, abilityNum) == ABILITY_NONE)
+            abilityNum = 0;
+        SetMonData(&party[slot], MON_DATA_ABILITY_NUM, &abilityNum);
+        CalculateMonStats(&party[slot]);
+        GiveMonInitialMoveset(&party[slot]);
+        (void)level;
+    }
 }
