@@ -3,7 +3,8 @@ name: Wire Pokemon Randomizer
 on:
   push:
     branches:
-      - feature/save-seeded-pokemon-randomizer
+      - upcoming-decap
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,7 +13,7 @@ jobs:
   wire-and-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout randomizer branch
+      - name: Checkout current branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -29,7 +30,7 @@ jobs:
             echo "No source changes were needed."
           else
             git commit -m "Wire save-seeded Pokemon randomizer"
-            git push origin HEAD:feature/save-seeded-pokemon-randomizer
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
 
       - name: Build Emerald
