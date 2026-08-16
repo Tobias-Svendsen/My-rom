@@ -33,5 +33,11 @@ jobs:
             git push origin HEAD:${GITHUB_REF_NAME}
           fi
 
+      - name: Verify required hooks exist
+        run: |
+          grep -q 'PokemonRandomizer_GetSpecies(RANDOMIZER_DOMAIN_WILD' src/wild_encounter.c
+          grep -q 'PokemonRandomizer_GetSpecies(RANDOMIZER_DOMAIN_STARTER' src/starter_choose.c
+          grep -q 'PokemonRandomizer_RandomizeTrainerParty' src/battle_setup.c
+
       - name: Build Emerald
         run: make -j2 emerald
