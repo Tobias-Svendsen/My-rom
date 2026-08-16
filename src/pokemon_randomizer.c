@@ -1,10 +1,9 @@
 #include "global.h"
 #include "pokemon_randomizer.h"
+#include "new_game.h"
 
-/* A small deterministic mixer. It is independent of the game's global RNG so
- * the same Trainer ID always produces the same randomized world. */
-static u32 sRandomizerSeed;
-
+/* The save's Trainer ID is the seed. Reading it directly means the same
+ * randomized world is reproduced after closing/reopening the game. */
 static u32 Mix(u32 x)
 {
     x ^= x >> 16;
@@ -17,12 +16,13 @@ static u32 Mix(u32 x)
 
 void PokemonRandomizer_Init(u32 trainerId)
 {
-    sRandomizerSeed = Mix(trainerId ^ 0x504B524Du);
+    (void)trainerId;
 }
 
 u32 PokemonRandomizer_GetSeed(enum PokemonRandomizerDomain domain, u32 index)
 {
-    return Mix(sRandomizerSeed
+    u32 trainerId = GetTrainerId(gSaveBlock2Ptr->playerTrainerId);
+    return Mix(Mix(trainerId ^ 0x504B524Du)
         ^ ((u32)domain * 0x9E3779B9u)
         ^ (index * 0x85EBCA6Bu));
 }
@@ -32,8 +32,6 @@ enum Species PokemonRandomizer_GetSpecies(enum PokemonRandomizerDomain domain, u
     u32 seed = PokemonRandomizer_GetSeed(domain, index);
     enum Species species;
 
-    /* SPECIES_EGG is the first invalid/randomizable sentinel in this project.
-     * Rejection keeps the result in the normal species range. */
     do
     {
         seed = Mix(seed);
